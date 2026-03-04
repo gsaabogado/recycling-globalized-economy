@@ -836,7 +836,7 @@ est_trend <- lapply(data, function(x)
 est = list(raw = est_raw, gravity = est_gravity, twfe = est_twfe, trend = est_trend)
 
 #### Bind the list elements ####
-est = lapply(est., function(x) lapply(x, bind_rows)) %>% 
+est = lapply(est, function(x) lapply(x, bind_rows)) %>%
   lapply(., bind_rows, .id = "var") %>% 
   bind_rows(., .id = "specification")
 
@@ -853,14 +853,14 @@ est = data %>% bind_rows()  %>% group_by(var) %>%
   left_join(est, .)
 
 #### Add the number of periods and country pairs ####
-est = data %>% bind_rows() %>% group_by(var) %>% 
-  summarise(n.pairs = length(unique(pair)), 
-            n.periods = length(unique(year))) %>% 
+est = data %>% bind_rows() %>% group_by(var) %>%
+  summarise(n.pairs = length(unique(pair)),
+            n.periods = length(unique(year))) %>%
   left_join(est, .)
 
 #### Check the data set ####
 head(est)
 
-#### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_stacked_glmm.rds")
+#### Save the results ####
+write_rds(est, file = "02_gen/04_results/zip_split_glmm.rds")
 

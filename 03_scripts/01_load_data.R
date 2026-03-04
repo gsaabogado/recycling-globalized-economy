@@ -237,17 +237,19 @@ imb = mutate(imb, material = gsub("iron_steel", "steel_iron", material)) %>%
   rename(prod_class = material)
 
 #### Add the material imbalance to the waste data (from) ####
-data = imb %>% ungroup() %>% select(-region, -inc_lvl, -gdp, -gdp_pc, -pop, -country_name) %>%
+data = imb %>% ungroup() %>%
+  select(year, prod_class, country, production_use, consumption, waste_rec_con, imb_trade, imb_con) %>%
   mutate(year = as.numeric(year)) %>% rename(from = country) %>%
-  rename(w_rec_o = waste_recovery, prod_use_o = production_use, con_o = consumption,
-         imb_trade_o = imb_trade, imb_adj_o = imb_corrected) %>%
+  rename(w_rec_o = waste_rec_con, prod_use_o = production_use, con_o = consumption,
+         imb_trade_o = imb_trade, imb_adj_o = imb_con) %>%
   left_join(data,.)
 
 #### Add the material imbalance of to the waste data (to) ####
-data = imb %>% ungroup() %>% select(-region, -inc_lvl, -gdp, -gfp_pc, -pop, -country_name) %>%
+data = imb %>% ungroup() %>%
+  select(year, prod_class, country, production_use, consumption, waste_rec_con, imb_trade, imb_con) %>%
   mutate(year = as.numeric(year)) %>% rename(to = country) %>%
-  rename(w_rec_d = waste_recovery, prod_use_d = production_use, con_d = consumption,
-         imb_trade_d = imb_trade, imb_adj_d = imb_corrected) %>%
+  rename(w_rec_d = waste_rec_con, prod_use_d = production_use, con_d = consumption,
+         imb_trade_d = imb_trade, imb_adj_d = imb_con) %>%
   left_join(data,.); rm(imb)
 
 #### Only keep data from 2000 ####
@@ -317,10 +319,11 @@ data = mutate(data, volume_tb = exp_volume - imp_volume,
               value_tb = exp_value - imp_value)
 
 #### Add the material imbalance to the waste data (from) ####
-data = imb %>% ungroup() %>% select(-region, -inc_lvl, -gdp, -gfp_pc, -pop, -country_name) %>%
+data = imb %>% ungroup() %>%
+  select(year, prod_class, country, production_use, consumption, waste_rec_con, imb_trade, imb_con) %>%
   mutate(year = as.numeric(year)) %>%
-  rename(w_rec = waste_recovery, prod_use = production_use, con = consumption,
-         imb_trade = imb_trade, imb_adj = imb_corrected) %>%
+  rename(w_rec = waste_rec_con, prod_use = production_use, con = consumption,
+         imb_trade = imb_trade, imb_adj = imb_con) %>%
   left_join(data,.)
 
 
@@ -330,7 +333,7 @@ data = filter(data, year >2000 & year <= 2016)
 #### Create an additional data set with aggregated waste and imbalance ####
 agg = data %>%
   group_by(year, country, inc_group, region) %>%
-  summarise_at(vars(exp_volume:imp_value, volume_bal:imb_adj), sum, na.rm = T) %>%
+  summarise_at(vars(exp_volume:imp_value, volume_tb:imb_adj), sum, na.rm = T) %>%
   mutate(prod_class = "total")
 
 #### Add the aggregate imbalance to the data set ####

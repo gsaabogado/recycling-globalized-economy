@@ -8,7 +8,6 @@ library(tidyverse)
 library(broom.mixed)
 library(fixest)
 library(parallel)
-library(pscl)
 
 #### Set working directory ####
 
@@ -86,7 +85,6 @@ library(tidyverse)
 library(broom.mixed)
 library(fixest)
 library(parallel)
-library(pscl)
 
 #### Set working directory ####
 
@@ -195,7 +193,6 @@ library(tidyverse)
 library(broom.mixed)
 library(fixest)
 library(parallel)
-library(pscl)
 
 #### Set working directory ####
 

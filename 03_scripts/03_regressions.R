@@ -586,29 +586,7 @@ est = list(fepois(volume ~ imb_dummy_o + imb_dummy_d,
 #### Check the estimates ####
 etable(est, se.below = T)
 
-
-
-as.data.frame(e)
-class(e)
-t = 11870.46*(quantile(data$imb_adj_d, na.rm = T, p = seq(0, 1, 0.1))* (exp(3.06e-7) -1))
-plot(t)
-ggplot(data) + geom_density(aes(imb_adj_d))
-mean(data$volume)
-sd(data$imb_adj_d)
-* 3.06e-05
-
-summary(data$volume)
-4.14
-
-
-100*(exp(3.06e-7)-1)
-
-etable(est, se.below = T)
-colnames(data)
-data = arrange(data, volume)
-head(data)
-
-#### --------------------------------------------------------------------- #### 
+#### --------------------------------------------------------------------- ####
 #### Naive gravity model with indicator variables (imbalance trade un-adjusted) ####
 #### --------------------------------------------------------------------- ####
 
@@ -675,30 +653,31 @@ library(fixest)
 #### Load the data set ####
 data = read_rds("02_gen/01_trade/balance_data.rds")
 data = filter(data, prod_class == "total")
+data_filt = filter(data, !(country %in% c("CHN", "USA", "TUR")))
 
 # Fit the model
-est <- feols(volume_bal ~ imb_adj + gdp + pop + gdp_pc + year + country, 
-             data = data %>% filter(!(country %in% c("CHN", "USA", "TUR"))), 
+est <- feols(volume_tb ~ imb_adj + gdp + pop + gdp_pc + year + country,
+             data = data_filt,
              cluster = "country")
 
 est
-# Extract unique combinations of year and country from the original data
-unique_year_country <- data %>%
+# Extract unique combinations of year and country from the filtered data
+unique_year_country <- data_filt %>%
   select(year, country) %>%
   distinct()
 
 # Compute percentiles of imb_adj
-percentiles <- quantile(data$imb_adj, probs = seq(0, 0.9, by = 0.05), na.rm = TRUE)
+percentiles <- quantile(data_filt$imb_adj, probs = seq(0, 0.9, by = 0.05), na.rm = TRUE)
 
 # Calculate mean values for other covariates
-mean_gdp <- mean(data$gdp, na.rm = TRUE)
-mean_pop <- mean(data$pop, na.rm = TRUE)
-mean_gdp_pc <- mean(data$gdp_pc, na.rm = TRUE)
+mean_gdp <- mean(data_filt$gdp, na.rm = TRUE)
+mean_pop <- mean(data_filt$pop, na.rm = TRUE)
+mean_gdp_pc <- mean(data_filt$gdp_pc, na.rm = TRUE)
 
 # Create a new data frame for prediction
-pred_data <- expand.grid(imb_adj = percentiles, 
-                         year = unique(data$year), 
-                         country = unique(data$country),
+pred_data <- expand.grid(imb_adj = percentiles,
+                         year = unique(data_filt$year),
+                         country = unique(data_filt$country),
                          gdp = mean_gdp,
                          pop = mean_pop,
                          gdp_pc = mean_gdp_pc)
@@ -708,7 +687,7 @@ predictions <- predict(est, newdata = pred_data, se.fit = TRUE)
 
 # Combine predictions with percentiles
 results <- data.frame(
-  imb_adj = rep(percentiles, length(unique(data$year)) * length(unique(data$country))),
+  imb_adj = rep(percentiles, length(unique(data_filt$year)) * length(unique(data_filt$country))),
   fitted_values = predictions$fit,
   se = predictions$se.fit
 )
@@ -717,7 +696,7 @@ results <- data.frame(
 ggplot(results, aes(x = imb_adj, y = fitted_values)) +
   geom_ribbon(aes(ymin = fitted_values - 1.96 * se, 
                   ymax = fitted_values + 1.96 * se), alpha = 0.8) +
-  labs(title = "Fitted Values of volume_bal with Standard Errors",
+  labs(title = "Fitted Values of volume_tb with Standard Errors",
        x = "imb_adj",
        y = "Fitted Values") +
   theme_minimal()

@@ -150,7 +150,6 @@ library(tidyverse)
 library(broom.mixed)
 library(glmmTMB)
 library(parallel)
-library(pscl)
 
 #### Set working directory ####
 

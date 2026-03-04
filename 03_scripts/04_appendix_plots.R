@@ -204,10 +204,14 @@ table = reactable(
 
 
 #### Transform the table to png to paste it in the paper ####
-html = "kable.html"
-htmlwidgets::saveWidget(table, html)
-webshot2::webshot(html, paste0(fig_dir, "top_exports.png"), 
-                  cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+tryCatch({
+  html = "kable.html"
+  htmlwidgets::saveWidget(table, html)
+  webshot2::webshot(html, paste0(fig_dir, "top_exports.png"),
+                    cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+}, error = function(e) {
+  message("Note: webshot2 requires Chrome/Chromium. Skipping top_exports.png: ", e$message)
+})
 
 #### _____________________________________________________________________ ####
 #### Table with top 10 largest importers ####
@@ -280,10 +284,14 @@ table = reactable(
 
 
 #### Transform the table to png to paste it in the paper ####
-html = "kable.html"
-htmlwidgets::saveWidget(table, html)
-webshot2::webshot(html, paste0(fig_dir, "top_imports.png"), 
-                  cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+tryCatch({
+  html = "kable.html"
+  htmlwidgets::saveWidget(table, html)
+  webshot2::webshot(html, paste0(fig_dir, "top_imports.png"),
+                    cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+}, error = function(e) {
+  message("Note: webshot2 requires Chrome/Chromium. Skipping top_imports.png: ", e$message)
+})
 
 #### _____________________________________________________________________ ####
 #### Table with top 10 largest not high income waste importers ####
@@ -364,10 +372,14 @@ table = reactable(
 
 
 #### Transform the table to png to paste it in the paper ####
-html = "kable.html"
-htmlwidgets::saveWidget(table, html)
-webshot2::webshot(html, paste0(fig_dir, "top_imports_low_inc.png"), 
-                  cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+tryCatch({
+  html = "kable.html"
+  htmlwidgets::saveWidget(table, html)
+  webshot2::webshot(html, paste0(fig_dir, "top_imports_low_inc.png"),
+                    cliprect = c(20, 60, 705, 300), zoom = 2, delay = 0.5)
+}, error = function(e) {
+  message("Note: webshot2 requires Chrome/Chromium. Skipping top_imports_low_inc.png: ", e$message)
+})
 
 
 #### _____________________________________________________________________ ####

@@ -821,11 +821,9 @@ extra_imb = data %>% filter(prod_class != "glass") %>%  group_by(prod_class) %>%
 
 
 #### Check the estimates ####
-etable(est[[3]], se.below = T, digits = 4, 
-       extralines = list("_Avg (SD). waste trade volume" = extra_vol %>% unlist(), 
-                         "_Avg SD. relative mat. imbalance" = extra_imb %>% unlist()))
+etable(est[[3]], se.below = T, digits = 4)
 
-#### --------------------------------------------------------------------- #### 
+#### --------------------------------------------------------------------- ####
 #### Relative material imbalance by product (F78-F1011) ####
 #### --------------------------------------------------------------------- ####
 
@@ -920,21 +918,6 @@ ggplot(data) + geom_density(aes(x = log(volume))) +
   facet_wrap(~prod_class)
 
 
-# Square Root Transformation
-data$sqrt_net_imb <- sqrt(data$net_imb)
-
-# Box-Cox Transformation
-library(MASS)
-data$box_net_imb <- boxcox(lm(data$net_imb ~ 1), lambda = seq(-2, 2, by = 0.1))
-
-# Plotting transformations
-par(mfrow = c(2, 2))
-hist(data$net_imb, main = "Original")
-hist(log(data$net_imb), main = "Log-Transformed")
-hist(data$sqrt_net_imb, main = "Square Root Transformed")
-hist(data$box_net_imb)
-
-
 #### Add descriptives for the table output ####
 extra_vol = data %>%  group_by(prod_class) %>% 
   summarise(mean = mean(volume, na.rm = T) %>% round(., 1), 
@@ -951,14 +934,10 @@ extra_imb = data %>%  group_by(prod_class) %>%
 
 
 #### Check the estimates ####
-etable(est[[4]], se.below = T, digits = 4, 
-       extralines = list("_Avg (SD). waste trade volume" = extra_vol %>% unlist(), 
-                         "_Avg SD. relative mat. imbalance" = extra_imb %>% unlist()))
+etable(est[[4]], se.below = T, digits = 4)
 
 #### Late table with the estimates ####
-esttex(est[[5]], se.below = T, digits = 4, 
-       extralines = list("_Avg (SD). waste trade volume" = extra_vol %>% unlist(), 
-                         "_Avg SD. relative mat. imbalance" = extra_imb %>% unlist()))
+etable(est[[5]], se.below = T, digits = 4)
 
 
 
@@ -1058,8 +1037,6 @@ extra_imb = data %>% filter(prod_class != "glass") %>%  group_by(prod_class) %>%
 
 
 #### Check the estimates ####
-etable(est[[4]], se.below = T, digits = 4, 
-       extralines = list("_Avg (SD). waste trade volume" = extra_vol %>% unlist(), 
-                         "_Avg SD. relative mat. imbalance" = extra_imb %>% unlist()))
+etable(est[[4]], se.below = T, digits = 4)
 
 

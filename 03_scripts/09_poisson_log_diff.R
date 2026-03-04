@@ -1,4 +1,4 @@
-#### --------------------------------------------------------------------- #### 
+#### --------------------------------------------------------------------- ####
 #### Pooled Poisson with log differences ####
 #### --------------------------------------------------------------------- ####
 
@@ -8,9 +8,6 @@ library(tidyverse)
 library(broom.mixed)
 library(fixest)
 library(parallel)
-library(pscl)
-
-#### Set working directory ####
 
 #### Solve conflicts ####
 conflict_prefer("filter", "dplyr")
@@ -19,13 +16,13 @@ conflict_prefer("filter", "dplyr")
 data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
 
 #### Estimate the log-ols model ####
-est_pois = list(raw = fepois(volume ~ imbalance, data = data, cluster = "pair", split = ~var), 
-               
-               gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) + 
+est_pois = list(raw = fepois(volume ~ imbalance, data = data, cluster = "pair", split = ~var),
+
+               gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) +
                                  eu_o + eu_d + contig + diplo_disagreement +
-                                 comlang_off + comcol + fta_wto, data = data, cluster = "pair", split = ~var), 
-               
-               twfe = fepois(volume ~ imbalance |pair + year, data = data, cluster = "pair", split = ~var)) 
+                                 comlang_off + comcol + fta_wto, data = data, cluster = "pair", split = ~var),
+
+               twfe = fepois(volume ~ imbalance |pair + year, data = data, cluster = "pair", split = ~var))
 
 #### Check the restults ####
 etable(est_pois$raw)
@@ -34,9 +31,9 @@ etable(est_pois$twfe)
 
 #### Bind the estimates together
 est <- lapply(est_pois, function(x) lapply(x, function(x)
-  data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2")))) %>% 
+  data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2")))) %>%
   lapply(., bind_rows, .id = "imb") %>%
-  bind_rows(., .id = "spec") 
+  bind_rows(., .id = "spec")
 
 #### Only keep the net imbalance text ####
 est$imb = gsub(".*: ", "", est$imb)
@@ -64,7 +61,7 @@ stat_dep <- data %>%
 est <- left_join(est, stat_dep)
 
 #### Add the number of periods and country pairs ####
-stat_period_pairs <- data %>% 
+stat_period_pairs <- data %>%
   group_by(imb = var) %>%
   summarise(
     n.countries = n_distinct(to),
@@ -81,35 +78,23 @@ head(est)
 #### Save the Poisson plot ####
 write_rds(est, file = "02_gen/04_results/poisson_pooled.rds")
 
-#### --------------------------------------------------------------------- #### 
-#### Pooled Poisson with log differences (Period > 2006) ####
+#### --------------------------------------------------------------------- ####
+#### Pooled Poisson with log differences (Period > 2006, EU origin only) ####
 #### --------------------------------------------------------------------- ####
 
-#### Load packages ####
-library(conflicted)
-library(tidyverse)
-library(broom.mixed)
-library(fixest)
-library(parallel)
-library(pscl)
-
-#### Set working directory ####
-
-#### Solve conflicts ####
-conflict_prefer("filter", "dplyr")
-
 #### Load the data ####
 data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
-data = filter(data, year > 2016)
+data = filter(data, year > 2006)
+data = filter(data, eu_o == 1)
 
 #### Estimate the log-ols model ####
-est_pois = list(raw = fepois(volume ~ imbalance, data = data, cluster = "pair", split = ~var), 
-                
-                gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) + 
+est_pois = list(raw = fepois(volume ~ imbalance, data = data, cluster = "pair", split = ~var),
+
+                gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) +
                                    eu_o + eu_d + contig + diplo_disagreement +
-                                   comlang_off + comcol + fta_wto, data = data, cluster = "pair", split = ~var), 
-                
-                twfe = fepois(volume ~ imbalance |pair + year, data = data, cluster = "pair", split = ~var)) 
+                                   comlang_off + comcol + fta_wto, data = data, cluster = "pair", split = ~var),
+
+                twfe = fepois(volume ~ imbalance |pair + year, data = data, cluster = "pair", split = ~var))
 
 #### Check the restults ####
 etable(est_pois$raw)
@@ -118,9 +103,9 @@ etable(est_pois$twfe)
 
 #### Bind the estimates together
 est <- lapply(est_pois, function(x) lapply(x, function(x)
-  data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2")))) %>% 
+  data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2")))) %>%
   lapply(., bind_rows, .id = "imb") %>%
-  bind_rows(., .id = "spec") 
+  bind_rows(., .id = "spec")
 
 #### Only keep the net imbalance text ####
 est$imb = gsub(".*: ", "", est$imb)
@@ -148,7 +133,7 @@ stat_dep <- data %>%
 est <- left_join(est, stat_dep)
 
 #### Add the number of periods and country pairs ####
-stat_period_pairs <- data %>% 
+stat_period_pairs <- data %>%
   group_by(imb = var) %>%
   summarise(
     n.countries = n_distinct(to),
@@ -162,25 +147,12 @@ est <- left_join(est, stat_period_pairs)
 #### Check the data set ####
 head(est)
 
-#### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/poisson_pooled.rds")
+#### Save the EU-restricted Poisson results ####
+write_rds(est, file = "02_gen/04_results/poisson_pooled_post_2006_only_eu.rds")
 
-#### --------------------------------------------------------------------- #### 
+#### --------------------------------------------------------------------- ####
 #### Stacked by product with Poisson and log differences ####
 #### --------------------------------------------------------------------- ####
-
-#### Load packages ####
-library(conflicted)
-library(tidyverse)
-library(broom.mixed)
-library(fixest)
-library(parallel)
-library(pscl)
-
-#### Set working directory ####
-
-#### Solve conflicts ####
-conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
 data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
@@ -197,37 +169,37 @@ function_est <- function(data, imb_var) {
   # Iterate over formulas
   tryCatch({
     # Estimate the model
-    results <- list(raw = fepois(volume ~ imbalance | prod_class, 
+    results <- list(raw = fepois(volume ~ imbalance | prod_class,
                                 data = test, cluster = "pair"),
-                    
-                    gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) + 
+
+                    gravity = fepois(volume ~ imbalance + log(dist) + log(gdp_pair) +
                                       eu_o + eu_d + contig + diplo_disagreement +
-                                      comlang_off + comcol + fta_wto| prod_class, 
+                                      comlang_off + comcol + fta_wto| prod_class,
                                     data = test, cluster = "pair"),
-                    
-                    twfe = fepois(volume ~ imbalance | prod_class + pair + year, 
-                                 data = test, cluster = "pair")) %>% 
-      
-      lapply(., function(x) data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2"))) %>% 
-      
-      bind_rows(., .id = "spec") %>% 
-      
+
+                    twfe = fepois(volume ~ imbalance | prod_class + pair + year,
+                                 data = test, cluster = "pair")) %>%
+
+      lapply(., function(x) data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2"))) %>%
+
+      bind_rows(., .id = "spec") %>%
+
       mutate(imb = imb_var)
-    
+
   }, error = function(e) {
     # Save NULL on error and display the warning
     results <- NULL
     warning(sprintf(
-      "Error in '%s' estimation: %s", 
+      "Error in '%s' estimation: %s",
       imb_var,  # Ensure imb_var is properly defined
       e$message))
   })
-  
+
   return(results)
 }
 
 #### Check the results ####
-est = lapply(c("net_imb_f1011", "net_imb_f1112", "net_imb_f89"), function(x) 
+est = lapply(c("net_imb_f1011", "net_imb_f1112", "net_imb_f89"), function(x)
   function_est(data = data, imb_var = x))
 
 #### Exclude all NULL elements ####
@@ -246,7 +218,7 @@ stat_imb <- data %>%
 est <- left_join(est, stat_imb)
 
 #### Add the average of the dependent variables ####
-stat_dep <- data %>% 
+stat_dep <- data %>%
   group_by(imb = var) %>%
   summarise(
     avg_dependent = mean(value, na.rm = TRUE),
@@ -274,22 +246,9 @@ head(est)
 #### Save the Poisson plot ####
 write_rds(est, file = "02_gen/04_results/poisson_stacked.rds")
 
-#### --------------------------------------------------------------------- #### 
+#### --------------------------------------------------------------------- ####
 #### Splitted by product with log-ols and log differences ####
 #### --------------------------------------------------------------------- ####
-
-#### Load packages ####
-library(conflicted)
-library(tidyverse)
-library(broom.mixed)
-library(fixest)
-library(parallel)
-library(pscl)
-
-#### Set working directory ####
-
-#### Solve conflicts ####
-conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
 data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
@@ -303,7 +262,7 @@ function_est <- function(data, imb_var, product) {
     # Filter the data
     test <- data %>%
       filter(var == imb_var, prod_class == product, !is.na(volume))
-    
+
     # Estimate the models
     results <- list(
       raw = fepois(volume ~ imbalance, data = test, cluster = "pair"),
@@ -315,7 +274,7 @@ function_est <- function(data, imb_var, product) {
       lapply(function(x) data.frame(tidy(x), n.obs = nobs(x), r2 = r2(x, type = "pr2"))) %>%
       bind_rows(.id = "spec") %>%
       mutate(prod_class = product, imb = imb_var)
-    
+
     return(results)
   }, error = function(e) {
     # Save NULL on error and display the warning
@@ -325,8 +284,8 @@ function_est <- function(data, imb_var, product) {
 }
 
 #### Check the results ####
-est = lapply(c("net_imb_f1011", "net_imb_f1112", "net_imb_f89"), function(x) 
-  lapply(c("aluminum", "iron_steel", "paper",  "plastic","glass"), function(y) 
+est = lapply(c("net_imb_f1011", "net_imb_f1112", "net_imb_f89"), function(x)
+  lapply(c("aluminum", "iron_steel", "paper",  "plastic","glass"), function(y)
     function_est(data = data, imb_var = x, product = y)))
 
 #### Exclude all NULL elements ####
@@ -356,7 +315,7 @@ stat_dep <- data %>%
 est <- left_join(est, stat_dep)
 
 #### Add the number of periods and country pairs ####
-stat_period_pairs <- data %>% 
+stat_period_pairs <- data %>%
   group_by(imb = var, prod_class) %>%
   summarise(
     n.countries = n_distinct(to),
@@ -372,5 +331,3 @@ head(est)
 
 #### Save the Poisson plot ####
 write_rds(est, file = "02_gen/04_results/poisson_split.rds")
-
-

@@ -226,10 +226,14 @@ tab = reactable(
                  imports_exports_cor = colDef(maxWidth = 100, align = "center",  name = "Imports Exports (Cor.)"))); tab
 
 #### Transform the table to png to paste it in the paper ####
-html = "kable.html"
-htmlwidgets::saveWidget(tab, html)
-webshot2::webshot(html, paste0(fig_dir, "waste_income_cor.png"), 
-                  cliprect = c(0, 60, 850, 140), zoom = 2, delay = 0.5)
+tryCatch({
+  html = "kable.html"
+  htmlwidgets::saveWidget(tab, html)
+  webshot2::webshot(html, paste0(fig_dir, "waste_income_cor.png"),
+                    cliprect = c(0, 60, 850, 140), zoom = 2, delay = 0.5)
+}, error = function(e) {
+  message("Note: webshot2 requires Chrome/Chromium. Skipping waste_income_cor.png: ", e$message)
+})
 
 
 #### _____________________________________________________________________ ####
@@ -388,6 +392,100 @@ ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 3.5)
 
 
 #### _____________________________________________________________________ ####
+#### Figure 3: Relative material imbalance by product (F78-F1011) ####
+#### _____________________________________________________________________ ####
+
+#### set the path to store the figures ####
+fig_dir = "04_output/figures/"
+
+#### Load packages ####
+library(NatParksPalettes)
+library(conflicted)
+library(tidyverse)
+library(fixest)
+
+#### Solve conflicts ####
+conflict_prefer("filter", "dplyr")
+
+#### Load the data set ####
+baci = read_rds("02_gen/01_trade/baci_raw.rds")
+miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+
+#### Standardize MISO and BACI material groups ####
+baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
+baci$prod_class = gsub("steel_iron", "iron_steel", baci$prod_class)
+miso$material = gsub("glass_cont|glass_flat", "glass", miso$material)
+baci = select(baci %>% ungroup(), -product)
+
+#### Rename the material category of MISO to the same name as BACI ####
+miso = miso %>% rename(prod_class = material)
+
+#### Subset the relevant MISO variables for this regression ####
+miso = miso %>% ungroup() %>% filter(grepl("F_7_8|F_10_11", name))  %>%
+  select(year, prod_class, name, country, value)
+
+#### Aggregate the glass components from MISO ####
+miso = miso %>% group_by(year, prod_class, country, name) %>%
+  summarise(value = sum(value))
+
+#### Spread MISO ####
+miso = spread(miso, name, value)
+
+#### Compute the MISO material imbalance ####
+miso <- miso %>%
+  mutate(`F78-F1011` = (F_7_8_prod_finals - F_10_11_supply_EoL_waste) / 1000) %>%
+  mutate(year = as.numeric(year))
+
+#### Add the classification ####
+miso = baci %>% ungroup() %>% select(year, country = from, inc = from_inc) %>%
+  distinct()  %>%
+  left_join(miso, .) %>% filter(year > 2000)
+
+#### Divide the data into high income and the rest of the world ####
+miso = mutate_at(miso, vars(inc), function(x)
+  x = ifelse(x == "High Income", "High Income", "Rest of the World"))
+
+#### Summarize total exports from the EU to each region ####
+plot <- miso  %>%
+  group_by(inc, year, product = prod_class) %>%
+  summarize(`F78-F1011` = sum(`F78-F1011`, na.rm = T)) %>%
+  filter(is.na(inc) == F)
+
+#### Change the name of the facets ####
+plot$product = gsub("_", " & ", plot$product) %>% str_to_sentence(.)
+plot$product = factor(plot$product, levels = c("Aluminum", "Iron & steel", "Paper",
+                                               "Plastic", "Glass" ))
+
+#### Plot the time series ####
+balance = ggplot(plot) +
+  geom_line(aes(x = year, y = `F78-F1011`, color = inc)) +
+  geom_point(aes(x = year, y = `F78-F1011`, color = inc)) +
+  facet_wrap(~product, scales = "free", ncol = 3) +
+  scale_shape_manual(values = seq(0, 15, 1)) +
+  geom_hline(aes(yintercept = 0), color = "black" ) +
+  scale_color_manual(values = natparks.pals("Yellowstone")) +
+
+  labs(y = "",
+       x = "Year") +
+  guides(color = guide_legend(nrow = 1)) +
+
+  theme(axis.line.x = element_line(),
+        legend.position = "top",
+        legend.justification = 0,
+        legend.title = element_blank(),
+        legend.key = element_blank(),
+        strip.background  = element_blank(),
+        strip.text = element_text(hjust = 0, face = "italic"),
+        panel.background = element_blank(),
+        panel.grid = element_blank()) +
+  ggpubr::grids("y"); balance
+
+#### Save the plot ####
+ggsave(file = paste0(fig_dir, "miso_f78_f1011.png"), width = 8, height = 4.5,
+       bg = "transparent")
+
+
+#### _____________________________________________________________________ ####
 #### Recycling rates and waste exports by country ####
 #### _____________________________________________________________________ ####
 
@@ -410,7 +508,6 @@ conflict_prefer("filter", "dplyr")
 #### Load the data set ####
 waste = read_rds("02_gen/eu_packaging_waste.rds")
 data = read_rds("02_gen/01_trade/gravity_data.rds")
-baci
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
