@@ -16,11 +16,11 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the BACI data ####
-files = list.files("01_data/01_trade/BACI_HS96/", pattern = "BACI", full.names = TRUE)
+files = list.files("in/trade/BACI_HS96/", pattern = "BACI", full.names = TRUE)
 data = lapply(files, vroom)
 
 #### Load the code book with waste products####
-goods = read_excel("01_data/01_trade/codebook.xlsx", sheet = "waste_product_codes")
+goods = read_excel("in/trade/codebook.xlsx", sheet = "waste_product_codes")
 
 #### Only keep the waste products ####
 data = lapply(data, function(x) filter(x, k %in% goods$product))
@@ -35,7 +35,7 @@ data = select(data, year = t, product = k,  value_tusd= v, volume_mt = q, from =
 data = left_join(data, goods %>% mutate(product = as.character(product)))
 
 #### Load the code book of regions and country codes ####
-regions = read_excel("01_data/01_trade/codebook.xlsx", sheet = "regions")
+regions = read_excel("in/trade/codebook.xlsx", sheet = "regions")
 
 #### Add the characteristics of the origin country ####
 data = left_join(data, regions |>
@@ -82,7 +82,7 @@ data = data %>%
   summarise(volume = sum(volume, na.rm = T), value = sum(value, na.rm = T))
 
 #### Save the trade data ####
-write_rds(data, file = "02_gen/01_trade/baci_raw.rds")
+write_rds(data, file = "out/trade/baci_raw.rds")
 
 #### Clean up ####
 rm(data, files, goods, regions); gc()
@@ -92,7 +92,7 @@ rm(data, files, goods, regions); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the gravity data from CSV (exported from PostgreSQL; see _export_gravity_db.R) ####
-cepii <- vroom::vroom("01_data/01_trade/gravity_cepii.csv")
+cepii <- vroom::vroom("in/trade/gravity_cepii.csv")
 
 # Only keep data from the 2000s
 cepii = filter(cepii, year > 2000)
@@ -112,7 +112,7 @@ controls = controls %>% ungroup() %>%  group_by(year, from, to) %>%
   summarise_at(vars(pop_o:manuf_tradeflow_baci), mean, na.rm = T)
 
 #### Save the control variables ####
-write_rds(controls, file = "02_gen/03_macro/gravity_controls.rds")
+write_rds(controls, file = "out/macro/gravity_controls.rds")
 
 #### Clean up ####
 rm(cepii, controls); gc()
@@ -123,8 +123,8 @@ rm(cepii, controls); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the database ####
-data_06 = read_excel("01_data/02_material_imbalance/miso_062024.xlsx", sheet = "data")
-data_07 = read_excel("01_data/02_material_imbalance/miso_072024.xlsx", sheet = "data")
+data_06 = read_excel("in/material_imbalance/miso_062024.xlsx", sheet = "data")
+data_07 = read_excel("in/material_imbalance/miso_072024.xlsx", sheet = "data")
 
 #### Bind the data sets ####
 data = bind_rows(data_06, data_07)
@@ -164,7 +164,7 @@ data = arrange(data, desc(imb_con))
 data = rename(data, country_name = region)
 
 #### Load the code book of regions and country codes ####
-regions = read_excel("01_data/01_trade/codebook.xlsx", sheet = "regions_imb")
+regions = read_excel("in/trade/codebook.xlsx", sheet = "regions_imb")
 
 #### Add the characteristics of the origin country ####
 test = left_join(data, regions |>
@@ -193,7 +193,7 @@ test = test %>% group_by(year, material, country, country_name, region, inc_lvl)
   summarise_at(vars(waste_rec_con:imb_man_con), sum, na.rm = T)
 
 #### Load the data on controls ####
-gdp = read_rds("02_gen/03_macro/gravity_controls.rds") %>%
+gdp = read_rds("out/macro/gravity_controls.rds") %>%
   select(year, country = from, pop = pop_o,
          gdp = gdp_o, gfp_pc = gdpcap_o) %>%
   filter(is.na(gdp) == F) %>%  distinct()
@@ -210,7 +210,7 @@ test = select(test, c(year:inc_lvl, production_use, consumption_updated,
                       pop, gdp, gdp_pc = gfp_pc))
 
 #### Save the control variables ####
-write_rds(test, file = "02_gen/02_miso/material_imbalance.rds")
+write_rds(test, file = "out/miso/material_imbalance.rds")
 
 #### Clean up ####
 rm(data, test, gdp, regions); gc()
@@ -220,9 +220,9 @@ rm(data, test, gdp, regions); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the waste trade, material imbalance, and controls data ####
-data = read_rds("02_gen/01_trade/baci_raw.rds")
-imb = read_rds("02_gen/02_miso/material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+data = read_rds("out/trade/baci_raw.rds")
+imb = read_rds("out/miso/material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Exclude the material classes that are not in both data sets ####
 data = filter(data, prod_class != "glass")
@@ -272,7 +272,7 @@ data = mutate(data, volume = volume, # Metric Tonnes
               value = value/1000)
 
 #### Save the naive gravity model ####
-write_rds(data, file = "02_gen/01_trade/gravity_data.rds")
+write_rds(data, file = "out/trade/gravity_data.rds")
 
 #### Clean up ####
 rm(data, agg, macro); gc()
@@ -282,9 +282,9 @@ rm(data, agg, macro); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the waste trade, material imbalance, and controls data ####
-data = read_rds("02_gen/01_trade/baci_raw.rds")
-imb = read_rds("02_gen/02_miso/material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+data = read_rds("out/trade/baci_raw.rds")
+imb = read_rds("out/miso/material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Exclude the material classes that are not in both data sets ####
 data = filter(data, prod_class != "glass")
@@ -347,7 +347,7 @@ macro = select(macro, year, country = from, gdp = gdp_o,
 data = left_join(data, macro)
 
 #### Save the naive gravity model ####
-write_rds(data, file = "02_gen/01_trade/balance_data.rds")
+write_rds(data, file = "out/trade/balance_data.rds")
 
 #### Clean up ####
 rm(data, agg, macro, from, to, reg, imb); gc()
@@ -357,7 +357,7 @@ rm(data, agg, macro, from, to, reg, imb); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the data ####
-data = vroom("01_data/03_recycling_rates/env_waspac.csv")
+data = vroom("in/recycling_rates/env_waspac.csv")
 
 #### Select the relevant variables ####
 data = select(data, year = TIME_PERIOD, country = geo,
@@ -410,7 +410,7 @@ data = filter(data, !(country_name %in% c("Norway", "Iceland", "Liechtenstein"))
 data = select(data, year, country, country_name, prod_class, operation, unit, value, flag)
 
 #### Save the EU packaging waste data ####
-write_rds(data, file = "02_gen/eu_packaging_waste.rds")
+write_rds(data, file = "out/eu_packaging_waste.rds")
 
 #### Clean up ####
 rm(data); gc()
@@ -421,10 +421,10 @@ rm(data); gc()
 #### _____________________________________________________________________ ####
 
 #### Load the data ####
-data = list(read_excel("01_data/05_trade_costs/escap_wb_tradecost_19952010.xlsx",
+data = list(read_excel("in/trade_costs/escap_wb_tradecost_19952010.xlsx",
                   sheet = "D"),
 
-            read_excel("01_data/05_trade_costs/escap_wb_tradecost_20112022.xlsx",
+            read_excel("in/trade_costs/escap_wb_tradecost_20112022.xlsx",
                        sheet = "D"))
 
 ##### Bind both data sets together ####
@@ -439,9 +439,9 @@ data$from = gsub("ROM", "ROU", data$from)
 data$to = gsub("ROM", "ROU", data$to)
 
 #### Save the data set ####
-write_rds(data, file = "02_gen/wb_tradecost.rds")
+write_rds(data, file = "out/wb_tradecost.rds")
 
 #### Clean up ####
 rm(data); gc()
 
-cat("01_load_data.R completed successfully.\n")
+cat("load_data.R completed successfully.\n")

@@ -15,7 +15,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_pooled_log_differences.rds")
 
 #### Estimate the log-ols model ####
 est_ols = list(raw = feols(log(volume) ~ imbalance, data = data, cluster = "pair", split = ~var), 
@@ -73,7 +73,7 @@ est <- left_join(est, stat_period_pairs)
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/log_ols_pooled.rds")
+write_rds(est, file = "out/results/log_ols_pooled.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### Stacked by product with log-ols and log differences ####
@@ -92,7 +92,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_stacked_log_differences.rds")
 
 #### Exclude zeros from the data ####
 #data = filter(data, volume > 0)
@@ -181,7 +181,7 @@ est <- left_join(est, stat_period_pairs)
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/log_ols_stacked.rds")
+write_rds(est, file = "out/results/log_ols_stacked.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### Spitted by product with log-ols and log differences ####
@@ -200,7 +200,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_stacked_log_differences.rds")
 
 #### Exclude zeros from the data ####
 #data = filter(data, volume > 0)
@@ -278,6 +278,6 @@ est <- left_join(est, stat_period_pairs)
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/log_ols_split.rds")
+write_rds(est, file = "out/results/log_ols_split.rds")
 
 

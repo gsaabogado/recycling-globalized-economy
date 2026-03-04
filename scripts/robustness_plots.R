@@ -12,10 +12,10 @@ library(ggplot2)
 conflict_prefer("filter", "dplyr")
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load the aggregated estimates ####
-data = read_rds("02_gen/04_results/all_est_log_diff.rds")
+data = read_rds("out/results/all_est_log_diff.rds")
 
 #### Keep only the imbalance coefficient ####
 data = filter(data, term == "imbalance")
@@ -84,9 +84,9 @@ ggsave(file = paste0(fig_dir, "rob_imbalance_pooled.png"),
 
 #### Load ZIP pooled results from per-specification files ####
 zip_pooled = bind_rows(
-  read_rds("02_gen/04_results/zip_pooled_raw_log_diff.rds"),
-  read_rds("02_gen/04_results/zip_pooled_gravity_log_diff.rds"),
-  read_rds("02_gen/04_results/zip_pooled_twfe_log_diff.rds")
+  read_rds("out/results/zip_pooled_raw_log_diff.rds"),
+  read_rds("out/results/zip_pooled_gravity_log_diff.rds"),
+  read_rds("out/results/zip_pooled_twfe_log_diff.rds")
 ) %>%
   filter(term == "imbalance", model == "conditional", imb == "net_imb_f1011") %>%
   transmute(spec,
@@ -140,8 +140,8 @@ ggsave(file = paste0(fig_dir, "rob_estimators_pooled.png"),
 
 #### Load ZIP split results from per-specification files ####
 zip_split = bind_rows(
-  read_rds("02_gen/04_results/zip_raw_glmm_split_log_diff.rds"),
-  read_rds("02_gen/04_results/zip_twfe_glmm_split_log_diff.rds")
+  read_rds("out/results/zip_raw_glmm_split_log_diff.rds"),
+  read_rds("out/results/zip_twfe_glmm_split_log_diff.rds")
 ) %>%
   filter(term == "imbalance", model == "conditional", imb == "net_imb_f1011") %>%
   transmute(spec,
@@ -199,4 +199,4 @@ ggplot(plot_a5, aes(x = estimate, y = spec, color = estimator_label)) +
 ggsave(file = paste0(fig_dir, "rob_estimators_split.png"),
        width = 10, height = 6, bg = "transparent")
 
-cat("15_robustness_plots.R completed successfully.\n")
+cat("robustness_plots.R completed successfully.\n")

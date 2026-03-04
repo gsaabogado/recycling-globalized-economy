@@ -18,9 +18,9 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -284,7 +284,7 @@ est = data %>% bind_rows() %>% group_by(var) %>%
   left_join(est, .)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_pooled_glmm.rds")
+write_rds(est, file = "out/results/zip_pooled_glmm.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -305,9 +305,9 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("summarize", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -576,7 +576,7 @@ est = lapply(data, bind_rows) %>% bind_rows() %>% group_by(product = prod_class,
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_stacked_glmm.rds")
+write_rds(est, file = "out/results/zip_stacked_glmm.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -597,9 +597,9 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("summarize", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -862,5 +862,5 @@ est = data %>% bind_rows() %>% group_by(var) %>%
 head(est)
 
 #### Save the results ####
-write_rds(est, file = "02_gen/04_results/zip_split_glmm.rds")
+write_rds(est, file = "out/results/zip_split_glmm.rds")
 

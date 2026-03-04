@@ -14,9 +14,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -122,9 +122,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -236,9 +236,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -343,9 +343,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -439,9 +439,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -544,9 +544,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -641,9 +641,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -738,9 +738,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -836,9 +836,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -954,9 +954,9 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro = read_rds("02_gen/03_macro/gravity_controls.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
+macro = read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)

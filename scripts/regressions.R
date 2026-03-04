@@ -7,7 +7,7 @@
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(conflicted)
@@ -19,8 +19,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -71,7 +71,7 @@ sum$N.countries = length(unique(data$country))
 sum$N.periods = length(unique(data$year))
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_pooled.rds")
+write_rds(sum, file = "out/results/rr_trade_elasticity_pooled.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -79,7 +79,7 @@ write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_pooled.rds")
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(conflicted)
@@ -91,9 +91,9 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds") %>% filter(year < 2022)
-costs = read_rds("02_gen/wb_tradecost.rds") %>% filter(year < 2022)
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds") %>% filter(year < 2022)
+costs = read_rds("out/wb_tradecost.rds") %>% filter(year < 2022)
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -158,14 +158,14 @@ sum$N.countries = length(unique(test$country))
 sum$N.periods = length(unique(test$year))
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_pooled_iv.rds")
+write_rds(sum, file = "out/results/rr_trade_elasticity_pooled_iv.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### Elasticity between Recycling and waste trade EU (IV-Pooled-Restricted) ####
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(conflicted)
@@ -177,9 +177,9 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds") %>% filter(year < 2022)
-costs = read_rds("02_gen/wb_tradecost.rds") %>% filter(year < 2022)
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds") %>% filter(year < 2022)
+costs = read_rds("out/wb_tradecost.rds") %>% filter(year < 2022)
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -269,7 +269,7 @@ sum$N.countries = length(unique(test$country))
 sum$N.periods = length(unique(test$year))
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_pooled_restricted.rds")
+write_rds(sum, file = "out/results/rr_trade_elasticity_pooled_restricted.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -277,7 +277,7 @@ write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_pooled_restricted.r
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(conflicted)
@@ -289,8 +289,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -340,7 +340,7 @@ sum$N.countries = length(unique(data$country))
 sum$N.periods = length(unique(data$year))
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_prod.rds")
+write_rds(sum, file = "out/results/rr_trade_elasticity_prod.rds")
 
 
 
@@ -349,7 +349,7 @@ write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_prod.rds")
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(conflicted)
@@ -361,9 +361,9 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-costs = read_rds("02_gen/wb_tradecost.rds") %>% filter(year < 2022)
-data = read_rds("02_gen/01_trade/gravity_data.rds") %>% filter(year < 2022)
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+costs = read_rds("out/wb_tradecost.rds") %>% filter(year < 2022)
+data = read_rds("out/trade/gravity_data.rds") %>% filter(year < 2022)
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -423,7 +423,7 @@ sum$N.countries = length(unique(data$country))
 sum$N.periods = length(unique(data$year))
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/rr_trade_elasticity_material_iv.rds")
+write_rds(sum, file = "out/results/rr_trade_elasticity_material_iv.rds")
 
 
 
@@ -438,7 +438,7 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Set very low volumes to zero ####
 data = mutate(data, volume = ifelse(volume == 1e-9, 0, volume))
@@ -494,7 +494,7 @@ library(tidyverse)
 library(fixest)
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 data = mutate(data, volume = ifelse(volume == 1e-9, 0, volume))
 data = mutate(data, pair = paste0(from, "_", to))
@@ -544,7 +544,7 @@ library(tidyverse)
 library(fixest)
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Transform the zero trade volume to actual zeros ####
 data = mutate(data, volume = ifelse(volume == 1e-9, 0, volume))
@@ -596,7 +596,7 @@ library(tidyverse)
 library(fixest)
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Transform the zero trade volume to actual zeros ####
 data = mutate(data, volume = ifelse(volume == 1e-9, 0, volume))
@@ -651,7 +651,7 @@ library(tidyverse)
 library(fixest)
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/balance_data.rds")
+data = read_rds("out/trade/balance_data.rds")
 data = filter(data, prod_class == "total")
 data_filt = filter(data, !(country %in% c("CHN", "USA", "TUR")))
 
@@ -706,7 +706,7 @@ ggplot(results, aes(x = imb_adj, y = fitted_values)) +
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -719,8 +719,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -827,7 +827,7 @@ fes <- lapply(est, function(x)
 sum = left_join(sum, fes)
 
 #### Save the data set ####
-write_rds(sum, file = "02_gen/04_results/did_china_metal.rds")
+write_rds(sum, file = "out/results/did_china_metal.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -835,7 +835,7 @@ write_rds(sum, file = "02_gen/04_results/did_china_metal.rds")
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -849,8 +849,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))

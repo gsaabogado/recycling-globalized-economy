@@ -6,7 +6,7 @@
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -19,7 +19,7 @@ library(ggplot2)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 data %>% group_by(year) %>% filter(year == 2016, prod_class != "total") %>% 
   summarise(volume = sum(volume)/1e6, value = sum(value))
@@ -146,7 +146,7 @@ ggsave(file = paste0(fig_dir, "waste_volume_balance.png"), width = 10, height = 
 
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -161,7 +161,7 @@ library(knitr)
 conflict_prefer("filter", "dplyr")
 
 #### Load data ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 data = mutate(data, value = value/1000)
 
 #### Aggregate to the total waste exports by country ####
@@ -241,7 +241,7 @@ tryCatch({
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -256,7 +256,7 @@ library(kableExtra)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Change the name of the product classes and organize ####
 data = filter(data, prod_class != "total", year < 2017)
@@ -313,7 +313,7 @@ ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 3.5)
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -326,7 +326,7 @@ library(ggplot2)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Change the name of the product classes and organize ####
 data = filter(data, prod_class != "total", year < 2017)
@@ -396,7 +396,7 @@ ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 3.5)
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -408,8 +408,8 @@ library(fixest)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-baci = read_rds("02_gen/01_trade/baci_raw.rds")
-miso = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -490,7 +490,7 @@ ggsave(file = paste0(fig_dir, "miso_f78_f1011.png"), width = 8, height = 4.5,
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -506,8 +506,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds")
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds")
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -605,7 +605,7 @@ est_plot = ggplot(sum) +
   ggpubr::grids("y"); est_plot
 
 #### Average foreign recycling share in 2021 ####
-plot = filter(read_rds("02_gen/eu_packaging_waste.rds"), 
+plot = filter(read_rds("out/eu_packaging_waste.rds"), 
                prod_class == "packaging_waste", unit == "percent",
                operation %in% c("recycling_intl", "recycling")) %>% 
   group_by(country, operation) %>% summarise(value = mean(value, na.rm = T)) %>% 
@@ -643,7 +643,7 @@ ggsave(file = paste0(fig_dir, "eu_waste.png"), width = 10, height = 5)
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -658,7 +658,7 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds")
+waste = read_rds("out/eu_packaging_waste.rds")
 
 #### Only keep the recycling operations ####
 waste = filter(waste, operation %in% c("generated","recycling_eu", "recycling_local", 
@@ -728,8 +728,8 @@ library(gt)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-est = list(read_rds("02_gen/04_results/rr_trade_elasticity_pooled.rds"),
-           read_rds("02_gen/04_results/rr_trade_elasticity_pooled_iv.rds")) %>% 
+est = list(read_rds("out/results/rr_trade_elasticity_pooled.rds"),
+           read_rds("out/results/rr_trade_elasticity_pooled_iv.rds")) %>% 
   bind_rows(.)
 
 #### Transform the estimate into a character vector ####
@@ -810,7 +810,7 @@ library(gt)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-est = read_rds("02_gen/04_results/rr_trade_elasticity_pooled_restricted.rds")
+est = read_rds("out/results/rr_trade_elasticity_pooled_restricted.rds")
 
 #### Transform the estimate into a character vector ####
 est = mutate_at(est, vars(estimate, std.error), function(x) 
@@ -892,8 +892,8 @@ library(gt)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-est = list(read_rds("02_gen/04_results/rr_trade_elasticity_prod.rds"),
-           read_rds("02_gen/04_results/rr_trade_elasticity_material_iv.rds")) %>% 
+est = list(read_rds("out/results/rr_trade_elasticity_prod.rds"),
+           read_rds("out/results/rr_trade_elasticity_material_iv.rds")) %>% 
   bind_rows(.)
 
 #### Transform the estimate into a character vector ####
@@ -975,7 +975,7 @@ library(gt)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-est = read_rds("02_gen/04_results/did_china_metal.rds")
+est = read_rds("out/results/did_china_metal.rds")
 
 #### Transform the estimate into a character vector ####
 est = mutate_at(est, vars(estimate, std.error), round, 3)
@@ -1037,7 +1037,7 @@ kable(as.data.frame(latex), format = "latex", booktabs = TRUE) %>%
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -1050,8 +1050,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -1135,7 +1135,7 @@ ggsave(file = paste0(fig_dir, "did_waste_value_trends.png"), width = 8, height =
 #### --------------------------------------------------------------------- ####
 
 #### set the path to store the figures ####
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -1148,8 +1148,8 @@ library(broom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-waste = read_rds("02_gen/eu_packaging_waste.rds") %>% select(-flag)
-data = read_rds("02_gen/01_trade/gravity_data.rds")
+waste = read_rds("out/eu_packaging_waste.rds") %>% select(-flag)
+data = read_rds("out/trade/gravity_data.rds")
 
 #### Only keep EU countries in the waste exports data ####
 data = filter(data, from %in% unique(waste$country))
@@ -1241,7 +1241,7 @@ ggsave(file = paste0(fig_dir, "did_rr_trends.png"), width = 8, height = 3.5)
 #### --------------------------------------------------------------------- ####
 
 
-fig_dir = "04_output/figures/"
+fig_dir = "images/figures/"
 
 #### Load packages ####
 library(NatParksPalettes)
@@ -1249,7 +1249,7 @@ library(tidyverse)
 library(readxl)
 
 #### Load the data ####
-data = read_xlsx("01_data/rPET_prices.xlsx")
+data = read_xlsx("in/rPET_prices.xlsx")
 
 colnames(data) = c("date", "rPET food-grade", "rPET flakes", "PET bottle-grade" )
 #### Plot the prices ####

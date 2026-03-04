@@ -15,7 +15,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the database #### 
-data = read_excel("01_data/02_material_imbalance/MISO2_allflows_noendofuse.xlsx")
+data = read_excel("in/material_imbalance/MISO2_allflows_noendofuse.xlsx")
 
 #### Transform from long to wide format ####
 data = gather(data, year, value, -c(region, name, material))
@@ -24,7 +24,7 @@ data = gather(data, year, value, -c(region, name, material))
 data = filter(data, year > 1995)
 
 #### Load the code book of regions and country codes ####
-regions = read_excel("01_data/01_trade/codebook.xlsx", sheet = "regions_imb") 
+regions = read_excel("in/trade/codebook.xlsx", sheet = "regions_imb") 
 head(regions)
 #### Add the characteristics of the origin country ####
 test = left_join(data %>% rename(country_name = region), regions |> 
@@ -53,7 +53,7 @@ test = test %>% group_by(year, material, name, country, country_name, region, in
   summarise_at(vars(value), sum, na.rm = T)
 
 #### Load the data on controls ####
-gdp = read_rds("02_gen/03_macro/gravity_controls.rds") %>% 
+gdp = read_rds("out/macro/gravity_controls.rds") %>% 
   select(year, country = from, pop = pop_o, 
          gdp = gdp_o, gfp_pc = gdpcap_o) %>% 
   filter(is.na(gdp) == F) %>%  distinct()
@@ -66,7 +66,7 @@ test = select(test, c(year:inc_lvl, name, value,
                       pop, gdp, gdp_pc = gfp_pc))
 
 #### Save the control variables ####
-write_rds(test, file = "02_gen/02_miso/raw_material_imbalance.rds")
+write_rds(test, file = "out/miso/raw_material_imbalance.rds")
 
 
 #### _____________________________________________________________________ ####
@@ -84,7 +84,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+data = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Extract the relevant variables ####
 data = filter(data, grepl("F_7_8|F_8_9|F_7_7|F_10_11|F_7_11", name))
@@ -172,7 +172,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+data = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Extract the relevant variables ####
 data = filter(data, grepl("F_7_8|F_8_9|F_7_7|F_10_11|F_7_11", name))
@@ -288,7 +288,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+data = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Extract the relevant variables ####
 data = filter(data, grepl("F_7_8|F_8_9|F_7_7|F_10_11|F_7_11", name))
@@ -429,7 +429,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+data = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Extract the relevant variables ####
 data = filter(data %>% ungroup(),
@@ -516,7 +516,7 @@ library(vroom)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data = read_rds("02_gen/02_miso/raw_material_imbalance.rds")
+data = read_rds("out/miso/raw_material_imbalance.rds")
 
 #### Spread from long to wide in the product dimension ####
 data = spread(data, name, value)

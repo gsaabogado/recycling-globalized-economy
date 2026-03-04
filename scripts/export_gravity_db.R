@@ -10,10 +10,10 @@
 ####  The gravity database was originally loaded from:                     ####
 ####    https://github.com/pachadotdev/gravitydatasets                     ####
 ####  using the SQL dump at:                                               ####
-####    01_data/01_trade/gravitydatasets.sql                                ####
+####    in/trade/gravitydatasets.sql                                ####
 ####                                                                       ####
 ####  After running this script, the output CSV should be placed at:       ####
-####    01_data/01_trade/gravity_cepii.csv                                 ####
+####    in/trade/gravity_cepii.csv                                 ####
 ####                                                                       ####
 #### ..................................................................... ####
 
@@ -35,7 +35,7 @@ cepii <- dbGetQuery(con, "SELECT * FROM cepii_gravity")
 dbDisconnect(con)
 
 # Write to CSV
-vroom::vroom_write(cepii, "01_data/01_trade/gravity_cepii.csv")
+vroom::vroom_write(cepii, "in/trade/gravity_cepii.csv")
 
-cat("Exported", nrow(cepii), "rows to 01_data/01_trade/gravity_cepii.csv\n")
-cat("File size:", round(file.size("01_data/01_trade/gravity_cepii.csv") / 1e6, 1), "MB\n")
+cat("Exported", nrow(cepii), "rows to in/trade/gravity_cepii.csv\n")
+cat("File size:", round(file.size("in/trade/gravity_cepii.csv") / 1e6, 1), "MB\n")

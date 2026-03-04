@@ -18,9 +18,9 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-baci  <- read_rds("02_gen/01_trade/baci_raw.rds")
-miso  <- read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro <- read_rds("02_gen/03_macro/gravity_controls.rds")
+baci  <- read_rds("out/trade/baci_raw.rds")
+miso  <- read_rds("out/miso/raw_material_imbalance.rds")
+macro <- read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -136,7 +136,7 @@ data <- data %>%
 data$volume <- as.integer(data$volume)
 
 #### Save the data ####
-write_rds(data, file = "02_gen/04_results/data_gravity_pooled_log_differences.rds")
+write_rds(data, file = "out/results/data_gravity_pooled_log_differences.rds")
 
 #### clear the space ####
 
@@ -157,7 +157,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_pooled_log_differences.rds")
 
 #### Define the bootstrap function ####
 fn <- function(
@@ -333,7 +333,7 @@ est = mutate(est, estimator = "zip", sample = "pooled", spec = "raw") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_pooled_raw_log_diff.rds")
+write_rds(est, file = "out/results/zip_pooled_raw_log_diff.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### Gravity ZIP for log differences ####
@@ -352,7 +352,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_pooled_log_differences.rds")
 
 #### Define the bootstrap function ####
 fn <- function(
@@ -534,7 +534,7 @@ est = mutate(est, estimator = "zip", sample = "pooled", spec = "gravity") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_pooled_gravity_log_diff.rds")
+write_rds(est, file = "out/results/zip_pooled_gravity_log_diff.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### TWFEs ZIP for log differences ####
@@ -553,7 +553,7 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_pooled_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_pooled_log_differences.rds")
 
 #### Demeaned the data by country pair and year ####
 pair_var_means <- data %>%
@@ -751,7 +751,7 @@ est = mutate(est, estimator = "zip", sample = "pooled", spec = "twfe") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_pooled_twfe_log_diff.rds")
+write_rds(est, file = "out/results/zip_pooled_twfe_log_diff.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -768,10 +768,10 @@ library(scales)
 conflict_prefer("filter", "dplyr")
 
 #### Load your regression results data frame ####
-est = list(read_rds("02_gen/04_results/zip_pooled_glmm_raw_log_difference.rds"),
-           read_rds("02_gen/04_results/zip_pooled_glmm_gravity_log_difference.rds"),
-           read_rds("02_gen/04_results/zip_pooled_glmm_twfe_log_difference.rds"),
-           read_rds("02_gen/04_results/zip_pooled_glmm_trend_log_difference.rds"))
+est = list(read_rds("out/results/zip_pooled_glmm_raw_log_difference.rds"),
+           read_rds("out/results/zip_pooled_glmm_gravity_log_difference.rds"),
+           read_rds("out/results/zip_pooled_glmm_twfe_log_difference.rds"),
+           read_rds("out/results/zip_pooled_glmm_trend_log_difference.rds"))
 
 est[[2]]$specification = "gravity_model"
 

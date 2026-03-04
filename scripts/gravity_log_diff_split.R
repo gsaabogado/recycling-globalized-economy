@@ -18,9 +18,9 @@ library(parallel)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data ####
-baci  <- read_rds("02_gen/01_trade/baci_raw.rds")
-miso  <- read_rds("02_gen/02_miso/raw_material_imbalance.rds")
-macro <- read_rds("02_gen/03_macro/gravity_controls.rds")
+baci  <- read_rds("out/trade/baci_raw.rds")
+miso  <- read_rds("out/miso/raw_material_imbalance.rds")
+macro <- read_rds("out/macro/gravity_controls.rds")
 
 #### Standardize MISO and BACI material groups ####
 baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
@@ -121,7 +121,7 @@ data <- data %>%
 data$volume <- as.integer(data$volume)
 
 #### Save the data ####
-write_rds(data, file = "02_gen/04_results/data_gravity_stacked_log_differences.rds")
+write_rds(data, file = "out/results/data_gravity_stacked_log_differences.rds")
 
 #### clear the space ####
 
@@ -143,7 +143,7 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("summarize", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_stacked_log_differences.rds")
 
 
 #### Demeaned the data by country pair and year ####
@@ -358,7 +358,7 @@ est = mutate(est, estimator = "zip", sample = "split", spec = "raw") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_raw_glmm_split_log_diff.rds")
+write_rds(est, file = "out/results/zip_raw_glmm_split_log_diff.rds")
 
 #### --------------------------------------------------------------------- #### 
 #### Gravity ZIP for log differences ####
@@ -378,7 +378,7 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("summarize", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_stacked_log_differences.rds")
 
 #### Demeaned the data by country pair and year ####
 prod_var_means <- data %>%
@@ -594,7 +594,7 @@ est = mutate(est, estimator = "zip", sample = "split", spec = "gravity") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_gravity_glmm_split_log_diff.rds")
+write_rds(est, file = "out/results/zip_gravity_glmm_split_log_diff.rds")
 
 
 #### --------------------------------------------------------------------- #### 
@@ -615,7 +615,7 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("summarize", "dplyr")
 
 #### Load the data ####
-data  <- read_rds("02_gen/04_results/data_gravity_stacked_log_differences.rds")
+data  <- read_rds("out/results/data_gravity_stacked_log_differences.rds")
 
 #### Split the data set ####
 data = split(data, f = list(data$prod_class, data$var))
@@ -836,4 +836,4 @@ est = mutate(est, estimator = "zip", sample = "split", spec = "twfe") %>%
 head(est)
 
 #### Save the Poisson plot ####
-write_rds(est, file = "02_gen/04_results/zip_twfe_glmm_split_log_diff.rds")
+write_rds(est, file = "out/results/zip_twfe_glmm_split_log_diff.rds")

@@ -12,7 +12,7 @@ library(scales)
 conflict_prefer("filter", "dplyr")
 
 #### Ensure output directory exists ####
-dir.create("04_output/tables/", showWarnings = FALSE, recursive = TRUE)
+dir.create("images/tables/", showWarnings = FALSE, recursive = TRUE)
 
 #### Shared term labels ####
 term_labels <- c(
@@ -117,7 +117,7 @@ build_pooled_table <- function(est) {
 #### Table 4: Pooled PPMLE ####
 #### ..................................................................... ####
 
-est_pooled <- read_rds("02_gen/04_results/poisson_pooled.rds")
+est_pooled <- read_rds("out/results/poisson_pooled.rds")
 
 out_pooled <- build_pooled_table(est_pooled)
 
@@ -130,13 +130,13 @@ out_pooled %>%
         col.names = c("", "Raw", "Gravity", "TWFE"),
         align = "lccc") %>%
   kable_styling(latex_options = c("hold_position"), position = "center") %>%
-  save_kable("04_output/tables/table4_ppmle_pooled.tex")
+  save_kable("images/tables/table4_ppmle_pooled.tex")
 
 #### ..................................................................... ####
 #### Table A4: EU-restricted PPMLE (post-2006, EU origin only) ####
 #### ..................................................................... ####
 
-est_eu <- read_rds("02_gen/04_results/poisson_pooled_post_2006_only_eu.rds")
+est_eu <- read_rds("out/results/poisson_pooled_post_2006_only_eu.rds")
 
 out_eu <- build_pooled_table(est_eu)
 
@@ -149,13 +149,13 @@ out_eu %>%
         col.names = c("", "Raw", "Gravity", "TWFE"),
         align = "lccc") %>%
   kable_styling(latex_options = c("hold_position"), position = "center") %>%
-  save_kable("04_output/tables/tableA4_eu_restricted.tex")
+  save_kable("images/tables/tableA4_eu_restricted.tex")
 
 #### ..................................................................... ####
 #### Table 5: PPMLE split by product (TWFE only) ####
 #### ..................................................................... ####
 
-est_split <- read_rds("02_gen/04_results/poisson_split.rds")
+est_split <- read_rds("out/results/poisson_split.rds")
 
 est_split <- est_split %>%
   filter(spec == "twfe") %>%
@@ -249,4 +249,4 @@ out_split %>%
         col.names = c("", "Aluminum", "Glass", "Iron \\& Steel", "Paper", "Plastic"),
         align = "lccccc") %>%
   kable_styling(latex_options = c("hold_position"), position = "center") %>%
-  save_kable("04_output/tables/table5_ppmle_split.tex")
+  save_kable("images/tables/table5_ppmle_split.tex")

@@ -1,3 +1,3 @@
 # One-time / non-pipeline scripts — excluded from renv dependency scanning
-03_scripts/04_appendix_plots.R
-03_scripts/_export_gravity_db.R
+scripts/appendix_plots.R
+scripts/export_gravity_db.R
