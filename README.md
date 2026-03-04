@@ -48,32 +48,34 @@ install.packages(c("tidyverse", "fixest", "glmmTMB", "vroom", "readxl",
 
 ## Data
 
-### Raw data included in the repository (small files)
+All data are provided via Zenodo at **[DOI TBD]**. The Zenodo archive contains two folders:
 
-- `01_data/01_trade/codebook.xlsx` -- Waste product and country classification
-- `01_data/01_trade/baci_hs_codes.csv` -- HS code descriptions
-- `01_data/01_trade/country_codes_V202401b.csv` -- BACI country codes
-- `01_data/01_trade/product_codes_HS96_V202401b.csv` -- BACI product codes
-- `01_data/02_material_imbalance/miso_062024.xlsx` -- MISO2 data (June 2024)
-- `01_data/02_material_imbalance/miso_072024.xlsx` -- MISO2 data (July 2024)
-- `01_data/03_recycling_rates/env_waspac.csv` -- EUROSTAT packaging waste
-- `01_data/06_chinese_recycling_rates/China recycling 2015-2023.xlsx` -- Chinese recycling rates
-- `01_data/rPET_prices.xlsx` -- rPET market prices
+- **`01_data.zip`** — all raw and auxiliary input files (unzip into project root so `01_data/` appears alongside `03_scripts/`)
+- **`02_gen.zip`** — all pre-processed intermediate datasets (unzip into project root so `02_gen/` appears alongside `03_scripts/`)
 
-### Large raw data (download separately)
+See [`01_data/README_data.md`](01_data/README_data.md) for descriptions of the original data sources.
 
-See [`01_data/README_data.md`](01_data/README_data.md) for detailed download instructions and file placement.
+### Raw data files (`01_data.zip`)
 
-- BACI HS96 trade data (~10 GB) from CEPII
-- CEPII Gravity database (~300 MB CSV, exported from PostgreSQL)
-- MISO2 full material flows (~27 MB) from Zenodo
-- ESCAP/World Bank trade costs (~178 MB)
+| File | Source | Description |
+|------|--------|-------------|
+| `01_trade/codebook.xlsx` | Authors | Waste product and country classification |
+| `01_trade/baci_hs_codes.csv` | CEPII | HS code descriptions |
+| `01_trade/country_codes_V202401b.csv` | CEPII | BACI country codes |
+| `01_trade/product_codes_HS96_V202401b.csv` | CEPII | BACI product codes (HS96) |
+| `01_trade/BACI_HS96/` | CEPII | Annual trade data 1996–2022 (~10 GB) |
+| `01_trade/gravity_cepii.csv` | CEPII | Gravity database CSV export (~300 MB) |
+| `02_material_imbalance/miso_062024.xlsx` | Wiedenhofer et al. | MISO2 data extract (June 2024) |
+| `02_material_imbalance/miso_072024.xlsx` | Wiedenhofer et al. | MISO2 data extract (July 2024) |
+| `02_material_imbalance/MISO2_allflows_noendofuse.xlsx` | Wiedenhofer et al. | MISO2 full material flows (~27 MB) |
+| `03_recycling_rates/env_waspac.csv` | EUROSTAT | Packaging waste statistics |
+| `05_trade_costs/` | ESCAP/World Bank | Trade cost database (~178 MB) |
+| `06_chinese_recycling_rates/China recycling 2015-2023.xlsx` | Authors | Chinese recycling rates |
+| `rPET_prices.xlsx` | Authors | rPET market prices (2016–2022) |
 
-### Intermediate datasets (Zenodo)
+### Intermediate datasets (`02_gen.zip`)
 
-All pre-processed intermediate datasets are provided as a single archive (`02_gen.zip`) on Zenodo at **[DOI TBD]**. Download and unzip it into the project root so that `02_gen/` appears alongside `03_scripts/`.
-
-The archive contains the following files, organized by which pipeline stage produces them:
+The archive contains pre-processed files organized by which pipeline stage produces them:
 
 | File | Produced by | Used by |
 |------|-------------|---------|
@@ -136,7 +138,7 @@ All output goes to `04_output/figures/` and `04_output/tables/`.
 ├── run_all.R                         # Master orchestration script
 ├── renv.lock                         # Pinned package versions
 ├── r_project.Rproj
-├── 01_data/                          # Raw data (large files gitignored)
+├── 01_data/                          # Raw data (all files on Zenodo; gitignored)
 │   ├── README_data.md
 │   ├── 01_trade/
 │   ├── 02_material_imbalance/
