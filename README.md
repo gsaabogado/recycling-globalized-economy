@@ -120,6 +120,8 @@ If you only want to verify the tables and figures in the paper, download `out.zi
 ```r
 # After unzipping out.zip into the project root:
 
+source("scripts/setup.R")           # Creates output directories
+
 source("scripts/main_plots.R")      # Figures 1-4, Table 1, Figure A.1
 source("scripts/desc_miso.R")       # Figure A.2
 source("scripts/agg_estimates.R")   # Aggregates model results
