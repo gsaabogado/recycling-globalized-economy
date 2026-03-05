@@ -29,12 +29,6 @@ in/rPET_prices.xlsx
 !in/**/.gitkeep
 !in/README_data.md
 
-# ── Old folder names (legacy; data moved to in/, out/, images/) ──
-01_data/
-02_gen/
-03_scripts/
-04_output/
-
 # ── OS files ──
 .DS_Store
 Thumbs.db
