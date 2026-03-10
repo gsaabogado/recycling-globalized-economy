@@ -19,62 +19,56 @@ library(ggplot2)
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("out/trade/gravity_data.rds")
-
-data %>% group_by(year) %>% filter(year == 2016, prod_class != "total") %>% 
-  summarise(volume = sum(volume)/1e6, value = sum(value))
+data = read_rds("out/trade/baci_raw.rds")
 
 #### Compute the total trade volume per year and product class ####
-plot = data %>% group_by(year, prod_class) %>% 
+plot = data %>% group_by(year, prod_class) %>%
   summarise(volume = sum(volume), value = sum(value))
 
-#### Determine the total GDP per year and add it to the data frame ####
-plot = data %>% select(year, from, gdp_o) %>% distinct() %>% 
-  group_by(year) %>% summarise(gdp = sum(gdp_o, na.rm = T)) %>% 
-  left_join(plot, .)
-
 #### Transform trade waste value and volume to billion USD ####
-plot = mutate(plot, gdp = gdp/1e6, value = value/1e3)
+plot = mutate(plot, value = value/1e6)
 
-#### Create a column with the share of GDP ####
-plot = plot %>% ungroup() %>% group_by(year) %>% 
-  mutate(agg_value = sum(value)) %>% mutate(share_gdp = 100*(agg_value/gdp))
+#### Create a column with the aggregate value ####
+plot = plot %>% ungroup() %>% group_by(year) %>%
+  mutate(agg_value = sum(value))
 
 #### Transform volume to Mega Tonnes ####
 plot$volume = plot$volume/1e6
 
-#### Filter the total volume data for the secondary axis ####
-total_volume <- plot %>%
-  filter(prod_class == "total") %>%
-  select(year, volume)
-
-#### Take away the total category #### 
-plot <- plot %>%
-  filter(prod_class != "total")
+#### Filter the total value data for the secondary axis ####
+total_value <- plot %>%group_by(year) %>%
+  summarise(value = sum(value), tot_volume = sum(volume))
 
 #### Change the name of the product class and organize as factors ####
-plot$prod_class = str_to_title(plot$prod_class) %>% gsub("_", " and ", .) %>% 
-  gsub("Aluminum", "Aluminum", .)
+plot$prod_class = str_to_title(plot$prod_class) %>% gsub("_", " and ", .) %>%
+  gsub("Aluminium", "Aluminum", .)
 
 #### Organize the data into factors ####
-plot$prod_class = factor(plot$prod_class, levels = c("Plastic","Aluminum", "Paper", "Steel and iron"))
+plot$prod_class = factor(plot$prod_class,
+                         levels = c("Plastic","Aluminum", "Glass",
+                                    "Paper", "Steel and iron"))
 
 #### Create the plot for the materials ####
-barplot = ggplot(plot, aes(x = year, y = value)) +
+barplot = ggplot(plot, aes(x = year, y = volume)) +
+
   geom_bar(aes(fill = prod_class), stat = "identity", position = "stack") +
-  scale_y_continuous(name = "Value (Billion USD)", sec.axis = sec_axis(~ ., name = "Volume (Megatonnes)")) +
-  geom_line(data = total_volume, color = "red",
-            aes(x = year, 
-                y = volume * (max(plot$value, na.rm = T) / max(volume, na.rm = T))))+
-  
-  geom_point(data = total_volume, 
-             aes(x = year, 
-                 y = volume * (max(plot$value, na.rm = T) / max(total_volume$volume, na.rm = T))), 
+  geom_line(data = total_value, color = "red",
+            aes(x = year,
+                y = value * 1.5)) +
+
+  geom_point(data = total_value,
+             aes(x = year,
+                 y = value * 1.5),
              color = "red", size = 2) +
+
+  scale_y_continuous(name = "Volume (Megatonnes)",
+                     sec.axis = sec_axis(~ ./1.5, name = "Value (Billion USD)")) +
+
   scale_fill_manual(values = natparks.pals("Yellowstone")) +
   guides(fill = guide_legend(nrow = 2)) +
-  labs(x = "Year", fill = "Product Class", title = "a) Waste trade aggregates (value and volume)") +
-  theme(axis.line.x = element_line(), 
+  labs(x = "Year", fill = "Product Class",
+       title = "a) Waste trade aggregates (value and volume)") +
+  theme(axis.line.x = element_line(),
         legend.position = "top",
         legend.justification = 0,
         legend.title = element_blank(),
@@ -87,18 +81,23 @@ barplot = ggplot(plot, aes(x = year, y = value)) +
         axis.text.y.right = element_text(color = "red")) +
   ggpubr::grids("y"); barplot
 
-#### Summarize total exports from the EU to each region #### 
-exp <- data %>% 
-  group_by(country = from_inc, year) %>% 
+#### Divide the data into high income and the rest of the world ####
+data = mutate_at(data, vars(from_inc, to_inc), function(x)
+  x = ifelse(x == "High Income", "High Income", "Rest of the World"))
+
+#### Summarize total exports from the EU to each region ####
+exp <- data %>%
+  group_by(country = from_inc, year) %>%
   summarize(exports = sum(volume, na.rm = T))
 
 #### Determine the share of trade in each year fo each category ####
-imp <- data %>% 
-  group_by(country = to_inc, year) %>% 
+imp <- data %>%
+  group_by(country = to_inc, year) %>%
   summarize(imports = sum(volume, na.rm = T))
 
 #### Join both data sets together ####
 exp = left_join(exp, imp)
+exp = arrange(exp, year, country)
 
 #### Determine the trade balance in each income group ####
 exp = mutate(exp, balance = exports-imports)
@@ -107,19 +106,19 @@ exp = mutate(exp, balance = exports-imports)
 exp$balance = exp$balance/1e6
 
 #### Plot the time series ####
-balance = ggplot(exp) + 
+balance = ggplot(exp) +
   geom_line(aes(x = year, y = balance, color = country)) +
   geom_point(aes(x = year, y = balance, color = country)) +
   scale_shape_manual(values = seq(0, 15, 1)) +
   geom_hline(aes(yintercept = 0), color = "black" ) +
   scale_color_manual(values = natparks.pals("Yellowstone")) +
-  
+
   labs(y = "", title = "b) Waste trade balance in Megatonnes",
        x = "Year") +
   guides(color = guide_legend(nrow = 2)) +
-  coord_cartesian(ylim = c(-75, 75)) +
-  
-  theme(axis.line.x = element_line(), 
+  coord_cartesian(ylim = c(-80, 80)) +
+
+  theme(axis.line.x = element_line(),
         legend.position = "top",
         legend.justification = 0,
         legend.title = element_blank(),
@@ -127,9 +126,7 @@ balance = ggplot(exp) +
         strip.background  = element_blank(),
         strip.text = element_text(hjust =0, face = "italic"),
         panel.background = element_blank(),
-        panel.grid = element_blank(),
-        axis.title.y.right = element_text(color = "red"),
-        axis.text.y.right = element_text(color = "red")) +
+        panel.grid = element_blank()) +
   ggpubr::grids("y"); balance
 
 #### Put both plots together ####
@@ -309,7 +306,7 @@ ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 3.5)
 
 
 #### _____________________________________________________________________ ####
-#### Material Imbalance from trade by world region and material ####
+#### Figure 2: Relative material imbalance by product (F78-F89) ####
 #### _____________________________________________________________________ ####
 
 #### set the path to store the figures ####
@@ -318,63 +315,74 @@ fig_dir = "images/figures/"
 #### Load packages ####
 library(NatParksPalettes)
 library(conflicted)
-library(cowplot)
 library(tidyverse)
-library(ggplot2)
+library(fixest)
 
 #### Solve conflicts ####
 conflict_prefer("filter", "dplyr")
 
 #### Load the data set ####
-data = read_rds("out/trade/gravity_data.rds")
+baci = read_rds("out/trade/baci_raw.rds")
+miso = read_rds("out/miso/raw_material_imbalance.rds")
 
-#### Change the name of the product classes and organize ####
-data = filter(data, prod_class != "total", year < 2017)
-data$prod_class = str_to_title(data$prod_class) 
-data$prod_class = gsub("Steel_iron", "Steel and Iron", data$prod_class)
-data$prod_class = factor(data$prod_class, levels = c(
-                                                 "Aluminum", 
-                                                 "Paper",
-                                                 "Steel and Iron", 
-                                                 "Plastic", 
-                                                 "Copper"))  
-#### Only keep the material imbalance data ####
-data = select(data, year, country = from, prod_class, inc_lvl = from_inc, 
-              waste_recovery = w_rec_o,
-            prod_use = prod_use_o, con_use = con_o, 
-            imb_trade = imb_trade_o, imb_recovery = imb_adj_o, 
-            pop = pop_o, gdp = gdp_o) %>% distinct()
+#### Standardize MISO and BACI material groups ####
+baci$prod_class = gsub("aluminium", "aluminum", baci$prod_class)
+baci$prod_class = gsub("steel_iron", "iron_steel", baci$prod_class)
+miso$material = gsub("glass_cont|glass_flat", "glass", miso$material)
+baci = select(baci %>% ungroup(), -product)
 
+#### Rename the material category of MISO to the same name as BACI ####
+miso = miso %>% rename(prod_class = material)
 
-#### Summarize total exports from the EU to each region #### 
-plot <- data %>% 
-  group_by(inc_lvl, year, prod_class) %>% 
-  summarize(waste_recovery = sum(waste_recovery, na.rm = T), 
-            prod = sum(prod_use, na.rm = T),
-            con = sum(con_use, na.rm = T),
-            imb_trade = sum(imb_trade, na.rm = T), 
-            imb_recovery = sum(imb_recovery, na.rm = T)) %>% 
-  mutate(year = as.numeric(year)) 
+#### Subset the relevant MISO variables for this regression ####
+miso = miso %>% ungroup() %>% filter(grepl("F_7_8|F_8_9", name))  %>%
+  select(year, prod_class, name, country, value)
 
-#### Organize the legend ####
-plot$inc_lvl = factor(plot$inc_lvl, levels = c("High Income", 
-                                               "Upper Middle Income", 
-                                               "Lower Middle Income", 
-                                               "Low Income"))
+#### Aggregate the glass components from MISO ####
+miso = miso %>% group_by(year, prod_class, country, name) %>%
+  summarise(value = sum(value))
 
+#### Spread MISO ####
+miso = spread(miso, name, value)
+
+#### Compute the MISO material imbalance ####
+miso <- miso %>%
+  mutate(`F78-F89` = (F_7_8_prod_finals - F_8_9_AC_finals)/1000) %>%
+  mutate(year = as.numeric(year))
+
+#### Add the classification ####
+miso = baci %>% ungroup() %>% select(year, country = from, inc = from_inc) %>%
+  distinct()  %>%
+  left_join(miso, .) %>% filter(year > 2000)
+
+#### Divide the data into high income and the rest of the world ####
+miso = mutate_at(miso, vars(inc), function(x)
+  x = ifelse(x == "High Income", "High Income", "Rest of the World"))
+
+#### Summarize total exports from the EU to each region ####
+plot <- miso %>%
+  group_by(inc, year, product = prod_class) %>%
+  summarize(`F78-F89` = sum(`F78-F89`, na.rm = T)) %>%
+  filter(is.na(inc) == F)
+
+#### Change the name of the facets ####
+plot$product = gsub("_", " & ", plot$product) %>% str_to_sentence(.)
+plot$product = factor(plot$product, levels = c("Aluminum", "Iron & steel", "Paper",
+                                                  "Plastic", "Glass" ))
 #### Plot the time series ####
-ggplot(plot) + 
-  geom_line(aes(x = year, y = imb_trade/1e3, color = inc_lvl, group = inc_lvl)) +
-  geom_point(aes(x = year, y = imb_trade/1e3, color = inc_lvl, group = inc_lvl)) +
+balance = ggplot(plot) +
+  geom_line(aes(x = year, y = `F78-F89`, color = inc)) +
+  geom_point(aes(x = year, y = `F78-F89`, color = inc)) +
+  facet_wrap(~product, scales = "free", ncol = 3) +
   scale_shape_manual(values = seq(0, 15, 1)) +
   geom_hline(aes(yintercept = 0), color = "black" ) +
   scale_color_manual(values = natparks.pals("Yellowstone")) +
-  facet_wrap(~prod_class, scales = "free", ncol = 4) +
-  
-  labs(y = "Giga Tonnes", 
-       x = "", title = "") +
-  
-  theme(axis.line.x = element_line(), 
+
+  labs(y = "",
+       x = "Year") +
+  guides(color = guide_legend(nrow = 1)) +
+
+  theme(axis.line.x = element_line(),
         legend.position = "top",
         legend.justification = 0,
         legend.title = element_blank(),
@@ -382,13 +390,11 @@ ggplot(plot) +
         strip.background  = element_blank(),
         strip.text = element_text(hjust =0, face = "italic"),
         panel.background = element_blank(),
-        panel.grid = element_blank(),
-        axis.title.y.right = element_text(color = "red"),
-        axis.text.y.right = element_text(color = "red")) +
-  ggpubr::grids("y")
+        panel.grid = element_blank()) +
+  ggpubr::grids("y"); balance
 
 #### Save the plot ####
-ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 3.5)
+ggsave(file = paste0(fig_dir, "miso_f78_f89.png"), width = 8, height = 4.5)
 
 
 #### _____________________________________________________________________ ####
@@ -1275,4 +1281,76 @@ ggplot(plot) +
 ggsave(file = paste0(fig_dir, "pet_prices.png"), width = 7, height = 4.5)
 
 
+#### _____________________________________________________________________ ####
+#### Figure A.2: Chinese domestic vs. foreign waste recycling ####
+#### _____________________________________________________________________ ####
 
+#### set the path to store the figures ####
+fig_dir = "images/figures/"
+
+#### Load the packages ####
+library(NatParksPalettes)
+library(cowplot)
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+
+#### Load the data ####
+data <- read_excel("in/chinese_recycling_rates/China recycling 2015-2023.xlsx", sheet = "Sheet1")
+
+#### Reshape to long format ####
+data = gather(data, year, value, -var, -type)
+
+#### Clean variable names ####
+data$var = str_to_title(data$var)
+data$var = gsub(" Waste Recycling \\(10k Tons\\)", "", data$var)
+data$var = factor(data$var, levels = c("Foreign", "Domestic"))
+data$year = as.numeric(data$year)
+
+#### Panel a: bar chart of volumes ####
+bar = ggplot(data %>% filter(type == "values")) +
+  geom_bar(aes(x = year, y = value, fill = var), stat = "identity") +
+  scale_fill_manual(values = natparks.pals("Yellowstone")) +
+  labs(y = "", x = "",
+       title = "a) Domestic vs. foreign waste\n    plastics recycling in 10k Tonnes") +
+  guides(color = guide_legend(nrow = 2)) +
+  theme(axis.line.x = element_line(),
+        legend.position = "top",
+        legend.justification = 0,
+        legend.title = element_blank(),
+        legend.key = element_blank(),
+        strip.background  = element_blank(),
+        plot.title = element_text(size = 12, face = "italic"),
+        strip.text = element_text(hjust =0, face = "italic"),
+        panel.background = element_blank(),
+        panel.grid = element_blank()) +
+  ggpubr::grids("y"); bar
+
+#### Panel b: line chart of shares ####
+line = ggplot(data %>% filter(type != "values")) +
+  geom_line(aes(x = year, y = value, group = var, color = var)) +
+  geom_point(aes(x = year, y = value, color = var)) +
+  scale_shape_manual(values = seq(0, 15, 1)) +
+  geom_hline(aes(yintercept = 0), color = "black" ) +
+  scale_color_manual(values = natparks.pals("Yellowstone")) +
+  scale_fill_manual(values = natparks.pals("Yellowstone")) +
+  labs(y = "", x = "",
+       title = "b) Share of domestic vs foreign waste\n    plastics recycling\n") +
+  guides(color = guide_legend(nrow = 1)) +
+  theme(axis.line.x = element_line(),
+        legend.position = "top",
+        legend.justification = 0,
+        legend.title = element_blank(),
+        legend.key = element_blank(),
+        plot.title = element_text(size = 12, face = "italic"),
+        strip.background  = element_blank(),
+        strip.text = element_text(hjust =0, face = "italic"),
+        panel.background = element_blank(),
+        panel.grid = element_blank()) +
+  ggpubr::grids("y"); line
+
+#### Put both plots together ####
+plot_grid(bar, line, rel_widths = c(1.25,1))
+
+#### Save the plot ####
+ggsave(file = paste0(fig_dir, "chinese_recycling.png"), width = 10, height = 4.5)
