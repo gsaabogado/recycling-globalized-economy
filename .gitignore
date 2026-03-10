@@ -21,7 +21,6 @@ images/
 
 # ── All raw data (provided via Zenodo) ──
 in/
-!in/README_data.md
 
 # ── OS files ──
 .DS_Store

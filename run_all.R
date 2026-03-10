@@ -7,7 +7,7 @@
 ####  Run from the project root (where r_project.Rproj lives).            ####
 ####                                                                       ####
 ####  Prerequisites:                                                       ####
-####   - All raw data files downloaded (see in/README_data.md)        ####
+####   - All raw data files downloaded (see README_data.md)        ####
 ####   - gravity_cepii.csv exported (see scripts/export_gravity_db.R)  ####
 ####   - R packages installed (see renv.lock or README.md)                 ####
 ####                                                                       ####

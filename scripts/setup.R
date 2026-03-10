@@ -49,7 +49,7 @@ missing <- required_files[!file.exists(required_files)]
 if (length(missing) > 0) {
   cat("WARNING: The following required data files are missing:\n")
   cat(paste0("  - ", missing, "\n"), sep = "")
-  cat("\nSee in/README_data.md for download instructions.\n")
+  cat("\nSee README_data.md for download instructions.\n")
 } else {
   cat("All required data files found.\n")
 }

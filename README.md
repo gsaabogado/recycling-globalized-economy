@@ -53,7 +53,7 @@ All data are provided via Zenodo at **[10.5281/zenodo.18935716](https://zenodo.o
 - **`in.zip`** — all raw and auxiliary input files (unzip into project root so `in/` appears alongside `scripts/`)
 - **`out.zip`** — all pre-processed intermediate datasets (unzip into project root so `out/` appears alongside `scripts/`)
 
-See [`in/README_data.md`](in/README_data.md) for descriptions of the original data sources.
+See [`README_data.md`](README_data.md) for descriptions of the original data sources.
 
 ### Raw data files (`in.zip`)
 
@@ -105,7 +105,7 @@ The archive contains pre-processed files organized by which pipeline stage produ
 
 ### Option A: Full replication from raw data
 
-For complete from-scratch replication, download all raw data (see `in/README_data.md`) and run:
+For complete from-scratch replication, download all raw data (see `README_data.md`) and run:
 
 ```r
 source("run_all.R")
