@@ -26,7 +26,7 @@ con <- dbConnect(
   dbname = "gravitydatasets",
   host = "localhost",
   port = 5432,
-  user = "luissarmiento",
+  user = "your_username",
   password = ""
 )
 

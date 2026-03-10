@@ -1,6 +1,6 @@
 # Data Download Instructions
 
-This file describes how to obtain the raw data files required to replicate the results in "Recycling in a Globalised Economy." Small data files are included in the repository. Large files must be downloaded separately and placed in the directories described below.
+This file describes how to obtain the raw data files required to replicate the results in "Recycling in a Globalised Economy." All data files are provided via Zenodo (`in.zip`). Large files that must be obtained from their original sources are described below.
 
 ## 1. BACI Trade Data (HS96)
 
@@ -54,9 +54,9 @@ This file describes how to obtain the raw data files required to replicate the r
   in/trade_costs/escap_wb_tradecost_20112022.xlsx
   ```
 
-## Files Included in the Repository
+## Files Included in the Zenodo Archive
 
-The following files are small enough to be committed and do not require separate download:
+The following files are included in `in.zip` on Zenodo and do not require separate download:
 
 | File | Size | Description |
 |------|------|-------------|

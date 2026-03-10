@@ -22,6 +22,9 @@ images/
 # ── All raw data (provided via Zenodo) ──
 in/
 
+# ── Zenodo archives ──
+*.zip
+
 # ── OS files ──
 .DS_Store
 Thumbs.db
