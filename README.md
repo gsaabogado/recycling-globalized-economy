@@ -48,7 +48,7 @@ install.packages(c("tidyverse", "fixest", "glmmTMB", "vroom", "readxl",
 
 ## Data
 
-All data are provided via Zenodo at **[DOI TBD]**. The Zenodo archive contains two folders:
+All data are provided via Zenodo at **[10.5281/zenodo.18935716](https://zenodo.org/records/18935716)**. The Zenodo archive contains two folders:
 
 - **`in.zip`** — all raw and auxiliary input files (unzip into project root so `in/` appears alongside `scripts/`)
 - **`out.zip`** — all pre-processed intermediate datasets (unzip into project root so `out/` appears alongside `scripts/`)
